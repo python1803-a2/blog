@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
+from post.helper import page_cache, page_count, get_top_n
 from post.models import Post
 
 
@@ -18,13 +19,13 @@ def create_post(request):
         post = Post.objects.create(title=title, content=content)
         return redirect('/post/read/?post_id=%s' % post.id)
     return render(request, "create_post.html")
-
-
+@page_count
+@page_cache(5)
 def read_post(request):
     post_id = int(request.GET.get("post_id"))
-    print(post_id)
+    # print(post_id)
     post = Post.objects.get(id=post_id)
-    print(post)
+    # print(post)
     return render(request, 'read_post.html', {"post": post})
 
 
@@ -49,7 +50,7 @@ def search_post(request):
     posts = Post.objects.filter(content__contains=key_word)
     return render(request, 'search.html', {"posts": posts})
 
-
+@page_cache(20)
 def list_post(request):
     page = int(request.GET.get('page', 1))
     total = Post.objects.count()
@@ -61,3 +62,9 @@ def list_post(request):
 
     posts = Post.objects.all().order_by("-id")[start: end]
     return render(request, 'post_list.html', {"posts": posts, "pages": range(pages)})
+
+
+def top(request):
+    rank_data = get_top_n(10)
+    print(rank_data)
+    return render(request, 'top10.html', {'rank_data': rank_data})

@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^edit/', post_views.edit_post),
     url(r'^search/', post_views.search_post),
     url(r'^read/', post_views.read_post),
+    url(r'^top10/', post_views.top),
     url(r'^$', post_views.list_post),
 ]
