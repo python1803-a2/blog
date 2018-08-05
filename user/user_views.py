@@ -15,6 +15,7 @@ def register(request):
             # 设置用户登录状
             request.session['uid'] = user.id
             request.session['nickname'] = user.nickname
+            request.session['icon'] = user.icon
             return redirect('/user/info/')
         else:
             return render(request, "register.html", {"error": form.errors})
@@ -33,7 +34,7 @@ def login(request):
             if check_password(password, user.password):
                 request.session["uid"] = user.id
                 request.session['nickname'] = user.nickname
-                return redirect('user/info/')
+                return redirect('/user/info/')
             else:
                 return render(request, 'login.html', {"error": "用户名或密码错误"})
         else:
@@ -52,4 +53,5 @@ def logout(request):
 def user_info(request):
     uid = request.session.get('uid')
     user = User.objects.get(id=uid)
+    print(user)
     return render(request, 'user_info.html', {"user": user})
